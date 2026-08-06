@@ -1,0 +1,25 @@
+# Environnements
+.venv/
+venv/
+__pycache__/
+*.pyc
+
+# Donnees (souvent trop lourdes ou sensibles pour Git)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Modeles entraines (lourds, versionner via MLflow/DVC plutot que Git si besoin)
+models/*
+!models/.gitkeep
+
+# Notebooks - garder le contenu mais pas les checkpoints
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db

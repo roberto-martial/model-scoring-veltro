@@ -1,0 +1,44 @@
+# Configuration centrale du projet Veltro Scoring
+# Rien de ce qui est ici ne doit se retrouver "en dur" dans le code Python.
+
+data:
+  raw_path: "data/raw/veltro_synthetic_deals.csv"
+  target: "is_attractive_target"
+  id_column: "company_id"
+
+split:
+  test_size: 0.2
+  random_state: 42
+
+columns:
+  numeric_skewed:        # skew > 1, transformation Yeo-Johnson pour le lineaire uniquement
+    - annual_revenue
+    - years_in_operation
+
+  numeric_normal:        # skew modere, scaling seul pour le lineaire
+    - ebitda_margin
+    - revenue_growth_3yr
+    - customer_concentration
+    - recurring_revenue_pct
+    - management_depth_score
+
+  categorical_signal:    # lien confirme avec la target (chi2 / V de Cramer) -> les 2 pipelines
+    - industry
+    - ownership_type
+
+  categorical_no_signal: # p-value non significative -> arbres uniquement
+    - geography
+
+model:
+  class_weight: "balanced"
+  cv_folds: 5
+  scoring_metrics:
+    - average_precision
+    - f1
+    - roc_auc
+
+# Notes de decision (issues de l'EDA - Eda.ipynb) :
+# - industry  : p=0.0000, V de Cramer=0.373 (lien substantiel)
+# - ownership_type : lien faible-modere
+# - geography : p=0.48 (non significatif) -> exclue du pipeline lineaire
+# - target desequilibree ~70/30 -> class_weight='balanced' + scoring robuste au desequilibre
