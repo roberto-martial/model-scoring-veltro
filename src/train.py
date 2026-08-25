@@ -19,8 +19,8 @@ from sklearn.model_selection import (
 )
 from sklearn.metrics import classification_report, average_precision_score, roc_auc_score
 from src.threshold_analysis import analyse_thresholds, find_threshold_for_target_precision
-
 from src.pipeline import build_pipelines
+import joblib
 
 
 def load_config(path: str = "config.yaml") -> dict:
@@ -120,6 +120,7 @@ def main():
     print(f"Meilleur score CV (average_precision) : {grid_search.best_score_:.3f}")
 
     best_model = grid_search.best_estimator_
+    joblib.dump(best_model, "models/best_model.pkl")
 
     # -----------------------------------------------------------------
     # Etape 3 : evaluation finale sur X_test (UNE SEULE FOIS, ici)
@@ -138,7 +139,8 @@ def main():
 
 
     analyse_thresholds(best_model, X_test, y_test)
-    find_threshold_for_target_precision(best_model, X_test, y_test, target_precision=0.70)
+    threshold = find_threshold_for_target_precision(best_model, X_test, y_test, target_precision=0.70)
+    joblib.dump(threshold, "models/best_threshold.pkl")
 
 
 if __name__ == "__main__":
