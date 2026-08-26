@@ -1,0 +1,15 @@
+.venv/
+.venv-api/
+__pycache__/
+*.pyc
+
+data/*
+reports
+tests
+.gitignore
+
+.ipynb_checkpoints/
+.vscode/
+
+.DS_Store
+Thumbs.db

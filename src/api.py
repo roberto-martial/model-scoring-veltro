@@ -9,7 +9,7 @@ app = FastAPI()
 
 threshold = joblib.load("models/best_threshold.pkl")
 model = joblib.load("models/best_model.pkl")
-shaper = joblib.load("models/best_shaper.pkl")
+
     
 class DealData(BaseModel):
     annual_revenue: float
@@ -31,5 +31,5 @@ async def score_deal(deal: DealData):
 
 @app.post("/shapley_analysis")
 async def shapley_analysis(deal: DealData):
-    shapley_results = shapley_test(deal.model_dump(), shaper)
+    shapley_results = shapley_test(deal.model_dump())
     return {"shapley_results": shapley_results}

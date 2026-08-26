@@ -35,7 +35,6 @@ def entrain():
             random_state=config["split"]["random_state"],
         )
     return X_train
-X_train = entrain()
 
 
 ### now we will just do the shapley test to see which variable push the result to a certain direction
@@ -47,14 +46,12 @@ def shapley_analysis(best_model, X_train):
 
     return shaper
 
-shaper = shapley_analysis(best_model, X_train)
-joblib.dump(shaper, "models/best_shaper.pkl")
-
-def shapley_test(dict_deal : dict, shaper): 
+def shapley_test(dict_deal): 
+    shapers = joblib.load("models/best_shaper.pkl")
     dic ={}
     new_deal_df = pd.DataFrame([dict_deal])
     new_deal_transformed = preprocessing.transform(new_deal_df)
-    shap_values = shaper(new_deal_transformed)
+    shap_values = shapers(new_deal_transformed)
     print(shap_values)
     noms_features = preprocessing.get_feature_names_out()
     resultats = list(zip(noms_features, shap_values.values[0], shap_values.data[0]))
@@ -69,4 +66,7 @@ def shapley_test(dict_deal : dict, shaper):
     return dic
 
 if __name__ == "__main__":
-    shapley_test(dict_deal_2, shaper)
+    X_train = entrain()
+    shaper = shapley_analysis(best_model, X_train)
+    joblib.dump(shaper, "models/best_shaper.pkl")
+    shapley_test(dict_deal_2)
